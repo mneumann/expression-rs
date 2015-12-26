@@ -35,10 +35,10 @@ pub enum NumExpr<T: NumType> {
     Recipz(Box<NumExpr<T>>),
 }
 
-impl<T: NumType> Expression<T> for NumExpr<T> {
-    fn evaluate<A>(&self, variables: &[A]) -> Result<T, ExpressionError>
-        where A: Expression<T>
-    {
+impl<T: NumType> Expression for NumExpr<T> {
+    type Element = T;
+
+    fn evaluate(&self, variables: &[NumExpr<T>]) -> Result<Self::Element, ExpressionError> {
         Ok(match self {
             &NumExpr::Var(n) => {
                 let no_vars: &[NumExpr<T>] = &[];

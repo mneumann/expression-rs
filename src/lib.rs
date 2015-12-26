@@ -19,8 +19,9 @@ pub enum ExpressionError {
 
 pub trait ElementType: Debug + Copy + Clone + PartialEq + PartialOrd {}
 
-pub trait Expression<T: ElementType>: Debug + Clone + PartialEq
+pub trait Expression: Debug + Clone + PartialEq
 {
+    type Element: ElementType;
     /// Evaluates the expression with the given variables bound.
-    fn evaluate<V>(&self, variables: &[V]) -> Result<T, ExpressionError> where V: Expression<T>;
+    fn evaluate(&self, variables: &[Self]) -> Result<Self::Element, ExpressionError>;
 }
