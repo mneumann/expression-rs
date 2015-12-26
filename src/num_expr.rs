@@ -3,7 +3,7 @@ use std::ops::{Add, Sub, Mul, Div};
 use std::num::{Zero, One};
 use asexp::Sexp;
 
-pub trait NumType: ElementType + Zero + One + Add<Output=Self> +
+pub trait NumType: ElementType + Default + Zero + One + Add<Output=Self> +
 Sub<Output=Self> + Mul<Output=Self> + Div<Output=Self> {}
 
 impl ElementType for f32 {}
