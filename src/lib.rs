@@ -26,3 +26,10 @@ pub trait Expression: Debug + Clone + PartialEq
     /// Evaluates the expression with the given variables bound.
     fn evaluate(&self, variables: &[Self]) -> Result<Self::Element, ExpressionError>;
 }
+
+pub trait Condition: Debug + Clone + PartialEq
+{
+    type Expr: Expression;
+    /// Evaluate the condition with the given variables bound.
+    fn evaluate(&self, variables: &[Self::Expr]) -> Result<bool, ExpressionError>;
+}

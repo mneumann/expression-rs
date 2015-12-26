@@ -1,8 +1,8 @@
-use super::{Expression, ExpressionError, ElementType};
+use super::{Expression, ExpressionError, ElementType, Condition};
 use asexp::Sexp;
 
 /// A boolean condition evaluates to either `true` or `false`.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Cond<E: Expression> {
     True,
     False,
@@ -20,8 +20,9 @@ pub enum Cond<E: Expression> {
     GreaterEqual(Box<E>, Box<E>),
 }
 
-impl<E: Expression> Cond<E> {
-    pub fn evaluate(&self, variables: &[E]) -> Result<bool, ExpressionError> {
+impl<E: Expression> Condition for Cond<E> {
+    type Expr = E;
+    fn evaluate(&self, variables: &[Self::Expr]) -> Result<bool, ExpressionError> {
         Ok(match *self {
             Cond::True => true,
             Cond::False => false,
