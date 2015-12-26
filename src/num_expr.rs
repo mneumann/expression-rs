@@ -1,13 +1,14 @@
-use super::{ExpressionError, Expression};
-use std::fmt::Debug;
+use super::{ExpressionError, Expression, ElementType};
 use std::ops::{Add, Sub, Mul, Div};
 use std::num::{Zero, One};
 use asexp::Sexp;
 
-pub trait NumType: Debug + Copy + Clone + Zero + One + Add<Output=Self> +
-Sub<Output=Self> + Mul<Output=Self> + Div<Output=Self> + PartialEq + PartialOrd + Default {}
+pub trait NumType: ElementType + Zero + One + Add<Output=Self> +
+Sub<Output=Self> + Mul<Output=Self> + Div<Output=Self> {}
 
+impl ElementType for f32 {}
 impl NumType for f32 {}
+impl ElementType for f64 {}
 impl NumType for f64 {}
 
 /// An expression evaluates to a numeric value of type `NumType`.

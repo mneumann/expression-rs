@@ -17,8 +17,9 @@ pub enum ExpressionError {
     InvalidOperation,
 }
 
-pub trait Expression<T>: Debug+Clone+PartialEq
-where T: Debug+Copy+Clone+PartialEq+PartialOrd
+pub trait ElementType: Debug + Copy + Clone + PartialEq + PartialOrd {}
+
+pub trait Expression<T: ElementType>: Debug + Clone + PartialEq
 {
     /// Evaluates the expression with the given variables bound.
     fn evaluate<V>(&self, variables: &[V]) -> Result<T, ExpressionError> where V: Expression<T>;
