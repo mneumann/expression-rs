@@ -1,0 +1,8 @@
+[package]
+name = "expression"
+version = "0.0.1"
+authors = ["Michael Neumann <mneumann@ntecs.de>"]
+
+[dependencies]
+
+asexp = "0.1.0"
