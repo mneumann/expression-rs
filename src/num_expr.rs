@@ -10,6 +10,10 @@ impl ElementType for f32 {}
 impl NumType for f32 {}
 impl ElementType for f64 {}
 impl NumType for f64 {}
+impl ElementType for u32 {}
+impl NumType for u32 {}
+impl ElementType for u64 {}
+impl NumType for u64 {}
 
 /// An expression evaluates to a numeric value of type `NumType`.
 #[derive(Clone, PartialEq, Eq, Debug)]
