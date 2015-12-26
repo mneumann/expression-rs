@@ -3,6 +3,7 @@
 extern crate asexp;
 
 pub mod num_expr;
+pub mod condition;
 
 use std::fmt::Debug;
 use std::cmp::{PartialEq, PartialOrd};
