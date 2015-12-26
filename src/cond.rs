@@ -1,14 +1,14 @@
 use super::{Expression, ExpressionError, ElementType};
 use asexp::Sexp;
 
-/// A condition evaluates to either `true` or `false`.
+/// A boolean condition evaluates to either `true` or `false`.
 #[derive(Debug, Clone)]
-pub enum Condition<E: Expression> {
+pub enum Cond<E: Expression> {
     True,
     False,
-    Not(Box<Condition<E>>),
-    And(Box<Condition<E>>, Box<Condition<E>>),
-    Or(Box<Condition<E>>, Box<Condition<E>>),
+    Not(Box<Cond<E>>),
+    And(Box<Cond<E>>, Box<Cond<E>>),
+    Or(Box<Cond<E>>, Box<Cond<E>>),
 
     /// If two expressions are equal
     Equal(Box<E>, Box<E>),
@@ -20,78 +20,78 @@ pub enum Condition<E: Expression> {
     GreaterEqual(Box<E>, Box<E>),
 }
 
-impl<E: Expression> Condition<E> {
+impl<E: Expression> Cond<E> {
     pub fn evaluate(&self, variables: &[E]) -> Result<bool, ExpressionError> {
         Ok(match *self {
-            Condition::True => true,
-            Condition::False => false,
-            Condition::Not(ref c) => !try!(c.evaluate(variables)),
-            Condition::And(ref c1, ref c2) => {
+            Cond::True => true,
+            Cond::False => false,
+            Cond::Not(ref c) => !try!(c.evaluate(variables)),
+            Cond::And(ref c1, ref c2) => {
                 try!(c1.evaluate(variables)) && try!(c2.evaluate(variables))
             }
-            Condition::Or(ref c1, ref c2) => {
+            Cond::Or(ref c1, ref c2) => {
                 try!(c1.evaluate(variables)) || try!(c2.evaluate(variables))
             }
-            Condition::Equal(ref e1, ref e2) => {
+            Cond::Equal(ref e1, ref e2) => {
                 try!(e1.evaluate(variables)) == try!(e2.evaluate(variables))
             }
-            Condition::Less(ref e1, ref e2) => {
+            Cond::Less(ref e1, ref e2) => {
                 try!(e1.evaluate(variables)) < try!(e2.evaluate(variables))
             }
-            Condition::Greater(ref e1, ref e2) => {
+            Cond::Greater(ref e1, ref e2) => {
                 try!(e1.evaluate(variables)) > try!(e2.evaluate(variables))
             }
-            Condition::LessEqual(ref e1, ref e2) => {
+            Cond::LessEqual(ref e1, ref e2) => {
                 try!(e1.evaluate(variables)) <= try!(e2.evaluate(variables))
             }
-            Condition::GreaterEqual(ref e1, ref e2) => {
+            Cond::GreaterEqual(ref e1, ref e2) => {
                 try!(e1.evaluate(variables)) >= try!(e2.evaluate(variables))
             }
         })
     }
 }
 
-impl<'a, E, T> Into<Sexp> for &'a Condition<E>
+impl<'a, E, T> Into<Sexp> for &'a Cond<E>
     where E: Expression<Element = T>,
           &'a E: Into<Sexp>,
           T: ElementType + Into<Sexp>
 {
     fn into(self) -> Sexp {
         match self {
-            &Condition::True => Sexp::from("true"),
-            &Condition::False => Sexp::from("false"),
-            &Condition::Not(ref a) => Sexp::from(("not", Into::<Sexp>::into(a.as_ref()))),
-            &Condition::And(ref a, ref b) => {
+            &Cond::True => Sexp::from("true"),
+            &Cond::False => Sexp::from("false"),
+            &Cond::Not(ref a) => Sexp::from(("not", Into::<Sexp>::into(a.as_ref()))),
+            &Cond::And(ref a, ref b) => {
                 Sexp::from(("and",
                             Into::<Sexp>::into(a.as_ref()),
                             Into::<Sexp>::into(b.as_ref())))
             }
-            &Condition::Or(ref a, ref b) => {
+            &Cond::Or(ref a, ref b) => {
                 Sexp::from(("or",
                             Into::<Sexp>::into(a.as_ref()),
                             Into::<Sexp>::into(b.as_ref())))
             }
-            &Condition::Equal(ref a, ref b) => {
+            &Cond::Equal(ref a, ref b) => {
                 Sexp::from(("==",
                             Into::<Sexp>::into(a.as_ref()),
                             Into::<Sexp>::into(b.as_ref())))
             }
-            &Condition::Less(ref a, ref b) => {
+            &Cond::Less(ref a, ref b) => {
                 Sexp::from(("<",
                             Into::<Sexp>::into(a.as_ref()),
                             Into::<Sexp>::into(b.as_ref())))
             }
-            &Condition::Greater(ref a, ref b) => {
+            &Cond::Greater(ref a, ref b) => {
                 Sexp::from((">",
                             Into::<Sexp>::into(a.as_ref()),
                             Into::<Sexp>::into(b.as_ref())))
             }
-            &Condition::LessEqual(ref a, ref b) => {
+            &Cond::LessEqual(ref a, ref b) => {
                 Sexp::from(("<=",
                             Into::<Sexp>::into(a.as_ref()),
                             Into::<Sexp>::into(b.as_ref())))
             }
-            &Condition::GreaterEqual(ref a, ref b) => {
+            &Cond::GreaterEqual(ref a, ref b) => {
                 Sexp::from((">=",
                             Into::<Sexp>::into(a.as_ref()),
                             Into::<Sexp>::into(b.as_ref())))
@@ -103,13 +103,13 @@ impl<'a, E, T> Into<Sexp> for &'a Condition<E>
 #[test]
 fn test_condition() {
     use super::num_expr::NumExpr;
-    let cond = Condition::Greater(box NumExpr::Var(0), box NumExpr::Const(0.0));
+    let cond = Cond::Greater(box NumExpr::Var(0), box NumExpr::Const(0.0));
 
     fn fun(a: f32) -> bool {
         a > 0.0
     }
 
-    fn check(cond: &Condition<NumExpr<f32>>, a: f32) {
+    fn check(cond: &Cond<NumExpr<f32>>, a: f32) {
         assert_eq!(Ok(fun(a)), cond.evaluate(&[NumExpr::Const(a)]))
     }
 
@@ -118,5 +118,5 @@ fn test_condition() {
     check(&cond, -1.4);
 
     let no_vars: &[NumExpr<f32>] = &[];
-    assert_eq!(Ok(true), Condition::True.evaluate(no_vars));
+    assert_eq!(Ok(true), Cond::True.evaluate(no_vars));
 }
