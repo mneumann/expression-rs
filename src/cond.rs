@@ -1,5 +1,6 @@
-use super::{Expression, ExpressionError, ElementType, Condition};
+use super::{Expression, ExpressionError, Condition};
 use asexp::Sexp;
+use std::fmt::Debug;
 
 /// A boolean condition evaluates to either `true` or `false`.
 #[derive(Debug, Clone, PartialEq)]
@@ -57,7 +58,7 @@ impl<E: Expression> Condition for Cond<E> {
 impl<'a, E, T> Into<Sexp> for &'a Cond<E>
     where E: Expression<Element = T>,
           &'a E: Into<Sexp>,
-          T: ElementType + Into<Sexp>
+          T: Debug + Copy + Clone + PartialEq + PartialOrd + Into<Sexp>
 {
     fn into(self) -> Sexp {
         match self {
