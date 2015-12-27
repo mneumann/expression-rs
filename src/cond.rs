@@ -103,23 +103,32 @@ impl<'a, E, T> Into<Sexp> for &'a Cond<E>
     }
 }
 
-#[test]
-fn test_condition() {
-    use super::num_expr::NumExpr;
-    let cond = Cond::Greater(box NumExpr::Var(0), box NumExpr::Const(0.0));
+#[cfg(test)]
+mod tests {
+    #[derive(Debug, Clone, PartialEq, PartialOrd)]
+    struct ConstNum(f32);
 
-    fn fun(a: f32) -> bool {
-        a > 0.0
+    impl ::ElementType for f32 {}
+
+    impl ::Expression for ConstNum {
+        type Element = f32;
+        fn evaluate(&self,
+                    _variables: &[Self::Element])
+                    -> Result<Self::Element, ::ExpressionError> {
+            Ok(self.0)
+        }
     }
 
-    fn check(cond: &Cond<NumExpr<f32>>, a: f32) {
-        assert_eq!(Ok(fun(a)), cond.evaluate(&[a]))
+    #[test]
+    fn test_condition() {
+        use Condition;
+        use super::Cond;
+        let no_vars: &[f32] = &[];
+
+        let cond = Cond::Greater(box ConstNum(0.1), box ConstNum(0.2));
+        assert_eq!(Ok(false), cond.evaluate(no_vars));
+
+        let cond = Cond::Not(box Cond::Greater(box ConstNum(0.1), box ConstNum(0.2)));
+        assert_eq!(Ok(true), cond.evaluate(no_vars));
     }
-
-    check(&cond, 123.0);
-    check(&cond, 0.0);
-    check(&cond, -1.4);
-
-    let no_vars: &[f32] = &[];
-    assert_eq!(Ok(true), Cond::True::<NumExpr<f32>>.evaluate(no_vars));
 }

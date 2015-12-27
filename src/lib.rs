@@ -1,8 +1,7 @@
-#![feature(zero_one, box_syntax)]
+#![feature(box_syntax)]
 
 extern crate asexp;
 
-pub mod num_expr;
 pub mod cond;
 
 use std::fmt::Debug;
