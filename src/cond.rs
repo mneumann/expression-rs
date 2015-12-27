@@ -108,8 +108,6 @@ mod tests {
     #[derive(Debug, Clone, PartialEq, PartialOrd)]
     struct ConstNum(f32);
 
-    impl ::ElementType for f32 {}
-
     impl ::Expression for ConstNum {
         type Element = f32;
         fn evaluate(&self,

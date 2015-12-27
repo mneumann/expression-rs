@@ -19,6 +19,15 @@ pub enum ExpressionError {
 
 pub trait ElementType: Debug + Copy + Clone + PartialEq + PartialOrd {}
 
+impl ElementType for f32 {}
+impl ElementType for f64 {}
+impl ElementType for u32 {}
+impl ElementType for u64 {}
+impl ElementType for i32 {}
+impl ElementType for i64 {}
+impl ElementType for usize {}
+impl ElementType for isize {}
+
 pub trait Expression: Debug + Clone + PartialEq
 {
     type Element: ElementType;
