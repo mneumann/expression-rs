@@ -18,7 +18,7 @@ pub enum ExpressionError {
     InvalidOperation,
 }
 
-pub trait ElementType: Debug + Copy + Clone + PartialEq + PartialOrd {}
+pub trait ElementType: Debug + Copy + Clone + PartialEq + PartialOrd + Default {}
 
 pub trait Expression: Debug + Clone + PartialEq
 {
