@@ -42,12 +42,10 @@ pub enum NumExpr<T: NumType> {
 impl<T: NumType> Expression for NumExpr<T> {
     type Element = T;
 
-    fn evaluate(&self, variables: &[NumExpr<T>]) -> Result<Self::Element, ExpressionError> {
+    fn evaluate(&self, variables: &[Self::Element]) -> Result<Self::Element, ExpressionError> {
         Ok(match self {
             &NumExpr::Var(n) => {
-                let no_vars: &[NumExpr<T>] = &[];
-                try!(try!(variables.get(n).ok_or(ExpressionError::InvalidVariable))
-                         .evaluate(no_vars))
+                try!(variables.get(n).ok_or(ExpressionError::InvalidVariable)).clone()
             }
             &NumExpr::Const(val) => val,
             &NumExpr::Add(ref e1, ref e2) => {
@@ -137,7 +135,7 @@ impl<'a, T: NumType + Into<Sexp>> Into<Sexp> for &'a NumExpr<T> {
 }
 
 #[cfg(test)]
-const NO_VARS: [NumExpr<f32>; 0] = [];
+const NO_VARS: [f32; 0] = [];
 
 #[test]
 fn test_expr_divz() {
@@ -171,8 +169,7 @@ fn test_expr() {
     }
 
     fn check(expr: &NumExpr<f32>, a: f32, b: f32) {
-        assert_eq!(Ok(fun(a, b)),
-                   expr.evaluate(&[NumExpr::Const(a), NumExpr::Const(b)]))
+        assert_eq!(Ok(fun(a, b)), expr.evaluate(&[a, b]))
     }
 
     check(&expr, 123.0, 4444.0);

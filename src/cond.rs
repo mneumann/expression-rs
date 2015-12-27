@@ -22,7 +22,9 @@ pub enum Cond<E: Expression> {
 
 impl<E: Expression> Condition for Cond<E> {
     type Expr = E;
-    fn evaluate(&self, variables: &[Self::Expr]) -> Result<bool, ExpressionError> {
+    fn evaluate(&self,
+                variables: &[<Self::Expr as Expression>::Element])
+                -> Result<bool, ExpressionError> {
         Ok(match *self {
             Cond::True => true,
             Cond::False => false,
@@ -111,13 +113,13 @@ fn test_condition() {
     }
 
     fn check(cond: &Cond<NumExpr<f32>>, a: f32) {
-        assert_eq!(Ok(fun(a)), cond.evaluate(&[NumExpr::Const(a)]))
+        assert_eq!(Ok(fun(a)), cond.evaluate(&[a]))
     }
 
     check(&cond, 123.0);
     check(&cond, 0.0);
     check(&cond, -1.4);
 
-    let no_vars: &[NumExpr<f32>] = &[];
-    assert_eq!(Ok(true), Cond::True.evaluate(no_vars));
+    let no_vars: &[f32] = &[];
+    assert_eq!(Ok(true), Cond::True::<NumExpr<f32>>.evaluate(no_vars));
 }
