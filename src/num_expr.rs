@@ -92,10 +92,6 @@ impl<T: NumType> Expression for NumExpr<T> {
             }
         })
     }
-
-    fn make_const(elm: Self::Element) -> Self {
-        NumExpr::Const(elm)
-    }
 }
 
 impl<'a, T: NumType + Into<Sexp>> Into<Sexp> for &'a NumExpr<T> {
