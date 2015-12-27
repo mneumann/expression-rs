@@ -25,6 +25,9 @@ pub trait Expression: Debug + Clone + PartialEq
     type Element: ElementType;
     /// Evaluates the expression with the given variables bound.
     fn evaluate(&self, variables: &[Self]) -> Result<Self::Element, ExpressionError>;
+
+    /// Constructs a constant expression. Required by lindenmayer-system.
+    fn make_const(elm: Self::Element) -> Self;
 }
 
 pub trait Condition: Debug + Clone + PartialEq
