@@ -58,7 +58,7 @@ impl<E: Expression> Condition for Cond<E> {
 impl<'a, E, T> Into<Sexp> for &'a Cond<E>
     where E: Expression<Element = T>,
           &'a E: Into<Sexp>,
-          T: Debug + Copy + Clone + PartialEq + PartialOrd + Into<Sexp>
+          T: Debug + Copy + Clone + PartialEq + PartialOrd
 {
     fn into(self) -> Sexp {
         match self {
