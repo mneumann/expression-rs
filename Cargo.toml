@@ -1,6 +1,6 @@
 [package]
 name = "expression"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["Michael Neumann <mneumann@ntecs.de>"]
 
 license = "MIT"
@@ -9,4 +9,4 @@ description = "Implements expression terms and conditions"
 keywords = ["expression", "term"]
 
 [dependencies]
-asexp = "0.2.0"
+asexp = "0.3.1"
