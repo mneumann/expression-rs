@@ -7,6 +7,7 @@ license = "MIT"
 repository = "https://github.com/mneumann/expression-rs"
 description = "Implements expression terms and conditions"
 keywords = ["expression", "term"]
+edition = "2018"
 
 [dependencies]
-asexp = "0.3.1"
+asexp = "0.3.2"

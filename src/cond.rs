@@ -29,27 +29,27 @@ impl<E: Expression> Condition for Cond<E> {
         Ok(match *self {
             Cond::True => true,
             Cond::False => false,
-            Cond::Not(ref c) => !try!(c.evaluate(variables)),
+            Cond::Not(ref c) => !c.evaluate(variables)?,
             Cond::And(ref c1, ref c2) => {
-                try!(c1.evaluate(variables)) && try!(c2.evaluate(variables))
+                c1.evaluate(variables)? && c2.evaluate(variables)?
             }
             Cond::Or(ref c1, ref c2) => {
-                try!(c1.evaluate(variables)) || try!(c2.evaluate(variables))
+                c1.evaluate(variables)? || c2.evaluate(variables)?
             }
             Cond::Equal(ref e1, ref e2) => {
-                try!(e1.evaluate(variables)) == try!(e2.evaluate(variables))
+                e1.evaluate(variables)? == e2.evaluate(variables)?
             }
             Cond::Less(ref e1, ref e2) => {
-                try!(e1.evaluate(variables)) < try!(e2.evaluate(variables))
+                e1.evaluate(variables)? < e2.evaluate(variables)?
             }
             Cond::Greater(ref e1, ref e2) => {
-                try!(e1.evaluate(variables)) > try!(e2.evaluate(variables))
+                e1.evaluate(variables)? > e2.evaluate(variables)?
             }
             Cond::LessEqual(ref e1, ref e2) => {
-                try!(e1.evaluate(variables)) <= try!(e2.evaluate(variables))
+                e1.evaluate(variables)? <= e2.evaluate(variables)?
             }
             Cond::GreaterEqual(ref e1, ref e2) => {
-                try!(e1.evaluate(variables)) >= try!(e2.evaluate(variables))
+                e1.evaluate(variables)? >= e2.evaluate(variables)?
             }
         })
     }
@@ -106,28 +106,28 @@ impl<'a, E, T> Into<Sexp> for &'a Cond<E>
 
 #[cfg(test)]
 mod tests {
+    use crate::{Expression, ExpressionError, Condition, cond::Cond};
+
     #[derive(Debug, Clone, PartialEq, PartialOrd)]
     struct ConstNum(f32);
 
-    impl ::Expression for ConstNum {
+    impl Expression for ConstNum {
         type Element = f32;
         fn evaluate(&self,
                     _variables: &[Self::Element])
-                    -> Result<Self::Element, ::ExpressionError> {
+                    -> Result<Self::Element, ExpressionError> {
             Ok(self.0)
         }
     }
 
     #[test]
     fn test_condition() {
-        use Condition;
-        use super::Cond;
         let no_vars: &[f32] = &[];
 
-        let cond = Cond::Greater(box ConstNum(0.1), box ConstNum(0.2));
+        let cond = Cond::Greater(Box::new(ConstNum(0.1)), Box::new(ConstNum(0.2)));
         assert_eq!(Ok(false), cond.evaluate(no_vars));
 
-        let cond = Cond::Not(box Cond::Greater(box ConstNum(0.1), box ConstNum(0.2)));
+        let cond = Cond::Not(Box::new(Cond::Greater(Box::new(ConstNum(0.1)), Box::new(ConstNum(0.2)))));
         assert_eq!(Ok(true), cond.evaluate(no_vars));
     }
 }

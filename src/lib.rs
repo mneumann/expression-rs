@@ -1,7 +1,3 @@
-#![feature(box_syntax)]
-
-extern crate asexp;
-
 pub mod cond;
 
 use std::fmt::Debug;
